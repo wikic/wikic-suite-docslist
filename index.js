@@ -2,8 +2,8 @@
 
 const getList = require('./getList');
 
-const docsList = (config) => {
-  if (!(config.docsList && config.docsList.enable)) return null;
+const docslist = (config) => {
+  if (!(config.docslist && config.docslist.enable)) return null;
 
   const self = {};
 
@@ -20,7 +20,7 @@ const docsList = (config) => {
   };
 
   self.afterReadAllDocs = function afterReadAllDocs() {
-    const getListOpt = this.config.docsList ? this.config.docsList.listTemplate : null;
+    const getListOpt = this.config.docslist ? this.config.docslist.listTemplate : null;
     self.list = getList(this.typeMap, self.infoTree, getListOpt);
   };
 
@@ -56,4 +56,4 @@ const docsList = (config) => {
   return self;
 };
 
-module.exports = docsList;
+module.exports = docslist;

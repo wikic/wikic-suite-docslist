@@ -1,14 +1,14 @@
-const docsListSuite = require('..');
+const docslistSuite = require('..');
 
-const docsList = docsListSuite({
-  docsList: {
+const docslist = docslistSuite({
+  docslist: {
     enable: true,
   },
 });
 
-const { afterRead: collectInfo, beforeBuildDocs, beforeRender, afterReadAllDocs } = docsList;
+const { afterRead: collectInfo, beforeBuildDocs, beforeRender, afterReadAllDocs } = docslist;
 
-describe('docsList.afterRead: collectInfo', () => {
+describe('docslist.afterRead: collectInfo', () => {
   beforeEach(() => {
     beforeBuildDocs();
   });
@@ -36,7 +36,7 @@ describe('docsList.afterRead: collectInfo', () => {
         types: ['a', 'b', 'c'],
       },
     });
-    expect(docsList.infoTree).toBeFalsy();
+    expect(docslist.infoTree).toBeFalsy();
   });
 
   it("should throw if can'n find context.page", () => {
@@ -64,7 +64,7 @@ describe('docsList.afterRead: collectInfo', () => {
         types: ['a', 'b', 'd'],
       },
     });
-    expect(docsList.infoTree).toEqual({
+    expect(docslist.infoTree).toEqual({
       a: {
         _docs: [],
         b: {
@@ -77,7 +77,7 @@ describe('docsList.afterRead: collectInfo', () => {
   });
 
   it('should do nothing if IS_DOC not true', () => {
-    docsList.infoTree = {};
+    docslist.infoTree = {};
     expect(
       collectInfo({
         page: {
@@ -93,23 +93,23 @@ describe('docsList.afterRead: collectInfo', () => {
         types: ['a', 'b', 'c'],
       },
     });
-    expect(docsList.infoTree).toEqual({});
+    expect(docslist.infoTree).toEqual({});
   });
 });
 
-describe('docsList', () => {
+describe('docslist', () => {
   it('returns null if option is falsy', () => {
-    expect(docsListSuite({ docsList: false })).toBeFalsy();
+    expect(docslistSuite({ docslist: false })).toBeFalsy();
   });
 
   test('beforeBuildDocs', () => {
     beforeBuildDocs();
-    expect(docsList.infoTree).toBeFalsy();
+    expect(docslist.infoTree).toBeFalsy();
   });
 
   describe('beforeRender', () => {
     beforeAll(() => {
-      docsList.list = 'something';
+      docslist.list = 'something';
     });
 
     it('returns origin context if IS_DOC is not true', () => {
@@ -120,21 +120,21 @@ describe('docsList', () => {
       expect(actual).toEqual({});
     });
 
-    it('add docsList.list to renderContext', () => {
+    it('add docslist.list to renderContext', () => {
       const wikic = {};
       const context = { IS_DOC: true };
       const actual = beforeRender.call(wikic, context);
-      expect(actual.renderContext.list).toEqual(docsList.list);
+      expect(actual.renderContext.list).toEqual(docslist.list);
     });
   });
 
   describe('afterReadAllDocs', () => {
     it('invokes getList', () => {
-      docsList.list = undefined;
-      docsList.infoTree = null;
+      docslist.list = undefined;
+      docslist.infoTree = null;
       const wikic = { config: {} };
       afterReadAllDocs.call(wikic, {});
-      expect(docsList.list).toBe('');
+      expect(docslist.list).toBe('');
     });
   });
 });
