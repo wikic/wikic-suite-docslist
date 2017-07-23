@@ -52,16 +52,22 @@ module.exports = function getList(
     options = opts;
   }
 
-  const { headerTemplate, subListTemplate, itemTemplate, listTemplate } = options;
+  const {
+    headerTemplate,
+    subListTemplate,
+    itemTemplate,
+    listTemplate,
+  } = options;
 
-  const header = level === 0
-    ? ''
-    : headerTemplate({
-      level,
-      index,
-      typeSlug,
-      typeName: typeMap(typeSlug),
-    });
+  const header =
+    level === 0
+      ? ''
+      : headerTemplate({
+        level,
+        index,
+        typeSlug,
+        typeName: typeMap(typeSlug),
+      });
 
   let body = Object.keys(infoTree)
     .sort()

@@ -2,7 +2,7 @@
 
 const getList = require('./getList');
 
-const docslist = (config) => {
+const docslist = (config, wikic) => {
   if (!(config.docslist && config.docslist.enable)) return null;
 
   const self = {};
@@ -20,8 +20,11 @@ const docslist = (config) => {
   };
 
   self.afterReadAllDocs = function afterReadAllDocs() {
-    const getListOpt = this.config.docslist ? this.config.docslist.listTemplate : null;
-    self.list = getList(this.typeMap, self.infoTree, getListOpt);
+    self.list = getList(
+      wikic.typeMap,
+      self.infoTree,
+      wikic.config.docslist.listTemplate
+    );
   };
 
   self.afterRead = function collectInfo(context) {

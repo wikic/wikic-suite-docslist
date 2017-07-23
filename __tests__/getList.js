@@ -25,20 +25,15 @@ describe('getList', () => {
   };
 
   it('works', () => {
-    expect(getList(wikic.typeMap, wikic.infoTree)).toMatch('<a href="/3.html">the title3</a>');
+    expect(getList(wikic.typeMap, wikic.infoTree)).toMatch(
+      '<a href="/3.html">the title3</a>'
+    );
   });
 
   it('template', () => {
     expect(
       getList(wikic.typeMap, wikic.infoTree, {
-        headerTemplate(
-          {
-            level,
-            index,
-            typeName,
-            typeSlug,
-          }
-        ) {
+        headerTemplate({ level, index, typeName, typeSlug }) {
           return `<p data-list="${level}-${index}" data-type="${typeSlug}">${typeName}</p>`;
         },
       })
