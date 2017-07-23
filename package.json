@@ -6,11 +6,11 @@
   "license": "MIT",
   "description": "Provides `list` nunjucks varibale",
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest",
     "lint": "eslint .",
     "format": "prettier-eslint --write './*.js' '__tests__/**/*.js'",
-    "coveralls": "npm run test && cat ./coverage/lcov.info | coveralls",
-    "prepublish": "npm test && npm lint && npm run format"
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
+    "prepublish": "npm test && npm run lint && npm run format"
   },
   "jest": {
     "testEnvironment": "node"
