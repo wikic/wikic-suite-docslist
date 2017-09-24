@@ -1,40 +1,77 @@
 /* eslint-disable no-underscore-dangle */
+module.exports = getList;
+
 const defaultOptions = {
   /**
-   * @param {Object} options
-   * @return {String} header of sublist
+   * @param {Object} opts
+   * @param {string} opts.title
+   * @param {string} opts.address
+   * @param {number} opts.index
+   * @param {number} opts.level
+   * @return {string}
    **/
-  headerTemplate({
-    level, // Number, level/depth of list
-    index, // Number, index in the superlist
-    typeName, // String, Mapped type name
-    typeSlug, // String, type(dirname)
-  }) {
-    return `<p id="${level}-${index}" data-type="${typeSlug}">${typeName}</p>`;
-  },
-
-  /**
-   * @param {Object} options, {sublist, index, typeSlug}
-   * @return {String} template to wrap sublist
-   **/
-  subListTemplate({ sublist }) {
-    return `<li>${sublist}</li>`;
-  },
-
-  /**
-   * @param {Object} options, { title, address, index }
-   * @return {String} template of document item link
-   **/
-  itemTemplate({ title, address }) {
+  item(opts) {
+    const { title, address } = opts;
     return `<li><a href="${address}">${title}</a></li>`;
   },
 
-  listTemplate({ header, body }) {
-    return `${header}<ul class="docs-list">${body}</ul>`;
+  /**
+   * @param {Object} opts
+   * @param {string} opts.body
+   * @param {string} opts.typeSlug type(dirname)
+   * @param {string} opts.typeName mapped type slug
+   * @param {number} opts.index
+   * @param {number} opts.level
+   * @return {string}
+   **/
+  group(opts) {
+    const { body, typeSlug, typeName, index, level } = opts;
+    return `<li><p id="${level}-${index}" data-type="${typeSlug}">${typeName}</p><ul>${body}</ul></li>`;
+  },
+
+  /**
+   * @param {Object} opts
+   * @param {string} opts.body
+   * @return {string}
+   **/
+  tree(opts) {
+    const { body } = opts;
+    return `<ul>${body}</ul>`;
   },
 };
 
-module.exports = function getList(
+/**
+ * @typedef {Object} TreeItem
+ * @property {string} title
+ * @property {string} address
+ */
+
+/**
+ * @typedef {Object} TreeBase
+ * @property {TreeItem[]} _docs
+ * @property {TreeBase} x
+ */
+
+/**
+ * @typedef {Object} Tree
+ * @property {TreeItem[]} _docs
+ * @property {TreeBase} x
+ */
+
+/**
+ * @param {Function} typeMap
+ * @param {Tree} infoTree
+ * @param {Object} opts
+ * @param {Function} [opts.tree]
+ * @param {Function} [opts.group]
+ * @param {Function} [opts.item]
+ * @param {boolean} [set=false]
+ * @param {string} [typeSlug=.]
+ * @param {number} [level=0]
+ * @param {number} [index=-1]
+ * @return {string}
+ **/
+function getList(
   typeMap,
   infoTree,
   opts,
@@ -52,54 +89,37 @@ module.exports = function getList(
     options = opts;
   }
 
-  const {
-    headerTemplate,
-    subListTemplate,
-    itemTemplate,
-    listTemplate,
-  } = options;
-
-  const header =
-    level === 0
-      ? ''
-      : headerTemplate({
-        level,
-        index,
-        typeSlug,
-        typeName: typeMap(typeSlug),
-      });
+  const { item, group, tree } = options;
 
   let body = Object.keys(infoTree)
     .sort()
     .map((newTypeSlug, newIndex) => {
       if (newTypeSlug === '_docs') return '';
-      return subListTemplate({
-        index: newIndex,
-        typeSlug: newTypeSlug,
-        sublist: getList(
-          typeMap,
-          infoTree[newTypeSlug],
-          options,
-          true,
-          newTypeSlug,
-          level + 1,
-          newIndex
-        ),
-      });
+      return getList(
+        typeMap,
+        infoTree[newTypeSlug],
+        options,
+        true,
+        newTypeSlug,
+        level + 1,
+        newIndex
+      );
     })
     .join('');
 
   if (Array.isArray(infoTree._docs)) {
     body += infoTree._docs
-      .map(({ title, address }, idx) =>
-        itemTemplate({
+      .map(({ title, address }, _index) =>
+        item({
           title,
           address,
-          index: idx,
+          level,
+          index: _index,
         })
       )
       .join('');
   }
 
-  return listTemplate({ header, body });
-};
+  if (level === 0) return tree({ body });
+  return group({ body, typeSlug, index, level, typeName: typeMap(typeSlug) });
+}

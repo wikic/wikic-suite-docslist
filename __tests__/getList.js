@@ -33,8 +33,8 @@ describe('getList', () => {
   it('template', () => {
     expect(
       getList(wikic.typeMap, wikic.infoTree, {
-        headerTemplate({ level, index, typeName, typeSlug }) {
-          return `<p data-list="${level}-${index}" data-type="${typeSlug}">${typeName}</p>`;
+        group({ body, typeSlug, index, level, typeName }) {
+          return `<li><p data-list="${level}-${index}" data-type="${typeSlug}">${typeName}</p><ul class="docs-list">${body}</ul></li>`;
         },
       })
     ).toMatch('<p data-list="1-0" data-type="a">a</p>');

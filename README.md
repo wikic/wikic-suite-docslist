@@ -22,13 +22,11 @@ module.exports = {
   docslist: {
     enable: true,
     listTemplate: {
-      headerTemplate: ({
-        level,
-        index,
-        typeName,
-        typeSlug,
-      }) => `<label for="${level}-${index}">${typeName}</label>
-<input type="checkbox" id="${level}-${index}" data-type="${typeSlug}">`,
+      group({ body, typeSlug, index, level, typeName }) {
+        return `<li><label for="${level}-${index}">${typeName}</label>
+<input type="checkbox" id="${level}-${index}" data-type="${typeSlug}">
+<ul class="docs-list">${body}</ul></li>`;
+      },
     }
   }
 }
